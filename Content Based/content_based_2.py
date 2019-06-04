@@ -15,7 +15,7 @@ n_users = ratings.user_id.unique()
 user_ratings = pd.merge(ratings, items, on='movie id')  
 
 #recommendation is being generated for user_id == 1
-user1_ratings = user_ratings.loc[ratings['user_id'] == 1]
+user1_ratings = user_ratings.loc[user_ratings['user_id'] == 1]
 
 #making extra column for providing the labeling
 user1_ratings['decision'] = 'na'
@@ -47,10 +47,14 @@ feature_vector = features[:1]
 #print(feature_vector)
 #print(feature_vector.T.sort_values(ascending=False,by=['rating']).shape)
 
-items.drop(['movie id','movie title' ,'release date','video release date', 'IMDb URL', 'unknown'],axis=1,inplace=True)
+#copying the 'item' dataframe for further operation
+items_2 = items.copy()
+items_2.drop(['movie id','movie title' ,'release date','video release date', 'IMDb URL', 'unknown'],axis=1,inplace=True)
 #print(items.head())
 
 #doing the matrix multiplication of the two matrices.
-result = feature_vector.dot(items.T)
-#print(result.T.sort_values(ascending=False,by=['rating']).head())
-#print(result.T)
+result = feature_vector.dot(items_2.T)
+result = result.T
+
+final_result = pd.concat([items,result],axis=1)
+print(final_result.sort_values(ascending=False,by=['rating']))
