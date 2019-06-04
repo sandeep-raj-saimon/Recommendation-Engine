@@ -17,10 +17,10 @@ user_ratings = pd.merge(ratings, items, on='movie id')
 #recommendation is being generated for user_id == 1
 user1_ratings = user_ratings.loc[ratings['user_id'] == 1]
 
-#selected = user_1.loc[(user_1['rating'] >=4)]
-
+#making extra column for providing the labeling
 user1_ratings['decision'] = 'na'
 
+#labeling the dataset
 for index,row in user1_ratings.iterrows():
   if row["rating"] >= 4:
       user1_ratings.at[index, 'decision'] = 1
@@ -38,9 +38,9 @@ output = output.to_frame()
 intake = user1_ratings.copy()
 intake.drop(['user_id','movie id','decision'],axis=1,inplace=True)
 
-#print(intake.head())
-#print(output.head())
-
+#merging the two dataframe and then finding the corelation
+#only taking the first row which is relevant
+#print the corelation in order to understand why!!
 features = pd.concat([intake,output],axis=1).corr()
 features.drop('rating',axis=1,inplace=True)
 feature_vector = features[:1]
@@ -50,5 +50,7 @@ feature_vector = features[:1]
 items.drop(['movie id','movie title' ,'release date','video release date', 'IMDb URL', 'unknown'],axis=1,inplace=True)
 #print(items.head())
 
+#doing the matrix multiplication of the two matrices.
 result = feature_vector.dot(items.T)
-print(result.T.sort_values(ascending=False,by=['rating']))
+#print(result.T.sort_values(ascending=False,by=['rating']).head())
+#print(result.T)
